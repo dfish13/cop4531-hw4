@@ -17,19 +17,20 @@ typedef struct vertex {
 } Vertex;
 
 
-//Adjacency list representation of a weighted, undirected graph
+
+// Adjacency list representation of a weighted, undirected graph
 class Graph {
 	public:
 		Graph();
 		Graph(int n);
 		Vertex* find(string s);
+		int index(string s);
 		Vertex* addVertex(string s);
 		bool addEdge(string a, string b, double w);
 		int nodes();
 		void print();
-		double shortestPath(string a, string b);
+		void dijkstra(string src, int* pred, double* dist);
 
-	private:
 		Vertex* v_list;
 		int size, max;
 };
@@ -41,18 +42,28 @@ int main(int argc, char* argv[]) {
 	int i, j = 2, k = 3, n;
 	string a, b, c;
 
-	n = 23;
+	n = 26;
 
 	Graph g(n);
 
 	for(i=0;i<n;i++) {
-		a = (char) ('a' + i) ;
+		a = (char) ('a' + i%26) ;
+		b = (char) ('a' + (i+1)%26) ;
+		c = (char) ('a' + (i+25)%26) ;
+
 		g.addVertex(a);
-		j = (j*j+1)%n;
-		k = (k*k+3)%n;
-		b = (char) ('a' + j) ;
-		c = (char) ('a' + k) ;
-		g.addEdge(b, c, (double) j);
+		g.addEdge(a, b, 1.0);
+		g.addEdge(a, c, 1.0);
+	}
+
+	int* pred;
+	double* dist;
+	pred = new int[n];
+	dist = new double[n];
+	g.dijkstra("a", pred, dist);
+
+	for(i=0;i<n;i++) {
+		cout << g.v_list[i].s << " pred = " << g.v_list[pred[i]].s << " dist = " << dist[i] << '\n' ;
 	}
 
 	g.print();
@@ -78,6 +89,14 @@ Vertex* Graph::find(string s) {
 			return & v_list[i];
 	}
 	return NULL;
+}
+
+int Graph::index(string s) {
+	for(int i=0; i<size ; i++) {
+		if(s == v_list[i].s)
+			return i;
+	}
+	return -1;
 }
 
 Vertex* Graph::addVertex(string s) {
@@ -109,6 +128,44 @@ bool Graph::addEdge(string a, string b, double w) {
 	}
 	return false;
 }
+
+void Graph::dijkstra(string src, int* pred, double* dist) {
+	int i , j = size, u, v;
+	double temp, alt;
+	Edge* e;
+	bool* q = new bool[size];
+	
+	for (i=0;i<size;i++) {
+		dist[i] = 1000.0 ;
+		q[i] = true;
+	}
+	dist[index(src)] = 0;
+
+	while (j > 0) {
+		temp = (double) 1000.0 ;
+		for(i=0;i<size;i++) {
+			if((dist[i] < temp) && q[i] == true) {
+				temp = dist[i];
+				u = i;
+			}
+		}
+		q[u] = false;
+
+		e = v_list[u].edges;
+		while (e != NULL) {
+			alt = dist[u] + e->w;
+			v = index(e->vptr->s);
+			if (alt < dist[v]) {
+				dist[v] = alt;
+				pred[v] = u;
+			}
+			e = e->next;
+		}
+		j--;
+	}
+
+}
+
 
 int Graph::nodes() {
 	return size;
