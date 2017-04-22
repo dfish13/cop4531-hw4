@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <list>
+#include <limits>
 
 using namespace std;
 
@@ -61,7 +62,7 @@ class Graph {
 
 		Vertex* v_list;
 		StringMap s_map;
-		int size, max;
+		int size, max; 
 };
 
 
@@ -207,13 +208,13 @@ void Graph::dijkstra(string src, int* pred, double* dist) {
 	bool* q = new bool[size];
 	
 	for (i=0;i<size;i++) {
-		dist[i] = 1000.0;
+		dist[i] = numeric_limits<double>::max();
 		q[i] = true;
 	}
 	dist[index(src)] = 0;
 
 	while (j > 0) {
-		temp = (double) 1000.0;
+		temp = numeric_limits<double>::max();
 		for(i=0;i<size;i++) {
 			if((dist[i] < temp) && q[i] == true) {
 				temp = dist[i];
