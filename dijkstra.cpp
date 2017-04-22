@@ -39,34 +39,44 @@ class Graph {
 int main(int argc, char* argv[]) {
 	
 	// test
-	int i, j = 2, k = 3, n;
-	string a, b, c;
+	int i, j, n;
+	string a, b, path, src(argv[2]), dest(argv[3]);
+	double d;
 
-	n = 26;
+	ifstream fin;
+	fin.open(argv[1]);
+	fin >> n;
 
 	Graph g(n);
 
 	for(i=0;i<n;i++) {
-		a = (char) ('a' + i%26) ;
-		b = (char) ('a' + (i+1)%26) ;
-		c = (char) ('a' + (i+25)%26) ;
-
+		fin >> a;
 		g.addVertex(a);
-		g.addEdge(a, b, 1.0);
-		g.addEdge(a, c, 1.0);
+		while ((fin.get() != '\n') && fin.good()) {
+			fin >> b >> d;
+			g.addEdge(a, b, d);
+		}
 	}
 
 	int* pred;
 	double* dist;
 	pred = new int[n];
 	dist = new double[n];
-	g.dijkstra("a", pred, dist);
+	g.dijkstra(src, pred, dist);
 
-	for(i=0;i<n;i++) {
-		cout << g.v_list[i].s << " pred = " << g.v_list[pred[i]].s << " dist = " << dist[i] << '\n' ;
+	i = g.index(dest);
+	j = g.index(src);
+	cout << dist[g.index(dest)] << '\n' ;
+	while (i != j) {
+		path = g.v_list[i].s + " " + path;
+		i = pred[i];
 	}
+	cout << src + " " + path << "\n\n";
+	
 
 	g.print();
+
+	fin.close();
 
 	return 0;
 }
@@ -136,13 +146,13 @@ void Graph::dijkstra(string src, int* pred, double* dist) {
 	bool* q = new bool[size];
 	
 	for (i=0;i<size;i++) {
-		dist[i] = 1000.0 ;
+		dist[i] = 1000.0;
 		q[i] = true;
 	}
 	dist[index(src)] = 0;
 
 	while (j > 0) {
-		temp = (double) 1000.0 ;
+		temp = (double) 1000.0;
 		for(i=0;i<size;i++) {
 			if((dist[i] < temp) && q[i] == true) {
 				temp = dist[i];
@@ -163,7 +173,7 @@ void Graph::dijkstra(string src, int* pred, double* dist) {
 		}
 		j--;
 	}
-
+	delete [] q;
 }
 
 
