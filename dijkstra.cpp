@@ -5,17 +5,10 @@
 
 using namespace std;
 
-typedef struct edgeNode {
-	double w;
-	struct vertex* vptr;
-	struct edgeNode* next;
-} Edge;
-
-
-typedef struct vertex {
-	string s;
-	Edge* edges;
-} Vertex;
+/*
+	Container which maps strings to integer
+	values using a hash function.
+*/
 
 typedef struct pair {
 	string s;
@@ -36,8 +29,24 @@ class StringMap {
 		int size;
 };
 
+/*
+	Adjacency list representation of a weighted,
+	undirected graph. Uses a StringMap object to index
+	into the vertex array.
+*/
 
-// Adjacency list representation of a weighted, undirected graph
+typedef struct edgeNode {
+	double w;
+	struct vertex* vptr;
+	struct edgeNode* next;
+} Edge;
+
+
+typedef struct vertex {
+	string s;
+	Edge* edges;
+} Vertex;
+
 class Graph {
 	public:
 		Graph();
@@ -58,7 +67,7 @@ class Graph {
 
 int main(int argc, char* argv[]) {
 	
-	// test
+	// main
 	int i, j, n;
 	string a, b, path, src(argv[2]), dest(argv[3]);
 	double d;
@@ -68,8 +77,8 @@ int main(int argc, char* argv[]) {
 	fin >> n;
 
 	Graph g(n);
-	StringMap string_map(n);
 
+	// populate graph
 	for(i=0;i<n;i++) {
 		fin >> a;
 		g.addVertex(a);
@@ -79,13 +88,7 @@ int main(int argc, char* argv[]) {
 		}
 	}
 
-	g.print();
-
-	for(i=0;i<n;i++) {
-		string_map.put(g.v_list[i].s, i);
-	}
-
-
+	// perform dijkstra and build path from pred and dist
 	int* pred;
 	double* dist;
 	pred = new int[n];
@@ -99,7 +102,7 @@ int main(int argc, char* argv[]) {
 		path = g.v_list[i].s + " " + path;
 		i = pred[i];
 	}
-	cout << src + " " + path << "\n\n";
+	cout << src + " " + path << '\n';
 
 	fin.close();
 
