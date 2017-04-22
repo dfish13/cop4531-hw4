@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <list>
 
 using namespace std;
 
@@ -16,6 +17,24 @@ typedef struct vertex {
 	Edge* edges;
 } Vertex;
 
+typedef struct pair {
+	string s;
+	int i;
+	pair(string s, int i): s(s), i(i) {} ;
+} Pair;
+
+class StringMap {
+	public:
+		StringMap();
+		StringMap(int n);
+		int get(string s);
+		int operator[](string s);
+		void put(string s, int i);
+		int hash(string s);
+
+		list<Pair>* s_map;
+		int size;
+};
 
 
 // Adjacency list representation of a weighted, undirected graph
@@ -48,6 +67,7 @@ int main(int argc, char* argv[]) {
 	fin >> n;
 
 	Graph g(n);
+	StringMap string_map(n);
 
 	for(i=0;i<n;i++) {
 		fin >> a;
@@ -57,6 +77,13 @@ int main(int argc, char* argv[]) {
 			g.addEdge(a, b, d);
 		}
 	}
+
+	g.print();
+
+	for(i=0;i<n;i++) {
+		string_map.put(g.v_list[i].s, i);
+	}
+
 
 	int* pred;
 	double* dist;
@@ -72,13 +99,48 @@ int main(int argc, char* argv[]) {
 		i = pred[i];
 	}
 	cout << src + " " + path << "\n\n";
-	
-
-	g.print();
 
 	fin.close();
 
 	return 0;
+}
+
+StringMap::StringMap() {
+	size = 0;
+	s_map = NULL;
+}
+
+StringMap::StringMap(int n) {
+	size = n;
+	s_map = new list<Pair>[n];
+}
+
+void StringMap::put(string s, int i) {
+	if (size > 0) {
+		s_map[hash(s)].push_front(Pair(s, i));
+	}
+}
+
+int StringMap::get(string s) {
+	int i = hash(s);
+	for (list<Pair>::iterator itr = s_map[i].begin(); itr != s_map[i].end(); itr++) {
+		if ((*itr).s == s) 
+			return (*itr).i ;
+	}
+	return -1;
+}
+
+int StringMap::operator[](string s) {
+	return get(s);
+}
+
+int StringMap::hash(string s) {
+	int h = 1, i;
+	for (i = 0; i < s.size(); i++) {
+		h = h*13 + s[i];
+		h %= size;
+	}
+	return h;
 }
 
 Graph::Graph() {
