@@ -51,6 +51,7 @@ class Graph {
 		void dijkstra(string src, int* pred, double* dist);
 
 		Vertex* v_list;
+		StringMap s_map;
 		int size, max;
 };
 
@@ -153,33 +154,28 @@ Graph::Graph(int n) {
 	size = 0;
 	max = n;
 	v_list = new Vertex[n];
+	s_map = StringMap(n);
 }
 
 Vertex* Graph::find(string s) {
-	for(int i=0; i<size ; i++) {
-		if(s == v_list[i].s)
-			return & v_list[i];
-	}
+	int i = s_map[s];
+	if (i >= 0)
+		return &v_list[i];
 	return NULL;
 }
 
 int Graph::index(string s) {
-	for(int i=0; i<size ; i++) {
-		if(s == v_list[i].s)
-			return i;
-	}
-	return -1;
+	return s_map[s];
 }
 
 Vertex* Graph::addVertex(string s) {
 	if(size < max && find(s) == NULL) {
 		v_list[size].s = s;
 		v_list[size].edges = NULL;
+		s_map.put(s, size);
 		return &v_list[size++];
 	}
-	else {
-		return NULL;
-	}
+	return NULL;
 }
 
 bool Graph::addEdge(string a, string b, double w) {
