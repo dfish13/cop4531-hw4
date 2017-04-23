@@ -1,0 +1,11 @@
+
+	Development log: Assignment 4
+	Name: Duncan Fisher
+
+Apr 9, 2017: created directory hw4 and touched all files necessary for the project.
+Apr 13, 2017: wrote Makefile and created template for file input.
+Apr 18, 2017: began implementation of dijkstra.cpp and ran preliminary tests.
+Apr 20, 2017: successfully implemented dijkstra algorithm.
+Apr 21, 2017: Optimized with StringMap and started testing.
+Apr 22, 2017: Added connectivity algorithms and more testing.
+Apr 22, 2017: wrote Discussion.
