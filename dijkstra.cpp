@@ -59,9 +59,13 @@ class Graph {
 		int nodes();
 		void print();
 		void dijkstra(string src, int* pred, double* dist);
+		void dfs(string src);
+		bool isConnected();
+		int components();
 
-		Vertex* v_list;
+		Vertex *v_list;
 		StringMap s_map;
+		bool *discovered;
 		int size, max; 
 };
 
@@ -95,6 +99,7 @@ int main(int argc, char* argv[]) {
 	pred = new int[n];
 	dist = new double[n];
 	g.dijkstra(src, pred, dist);
+
 
 	i = g.index(dest);
 	j = g.index(src);
@@ -201,6 +206,7 @@ bool Graph::addEdge(string a, string b, double w) {
 	return false;
 }
 
+// Assumes the graph is connected
 void Graph::dijkstra(string src, int* pred, double* dist) {
 	int i , j = size, u, v;
 	double temp, alt;
@@ -236,6 +242,61 @@ void Graph::dijkstra(string src, int* pred, double* dist) {
 		j--;
 	}
 	delete [] q;
+}
+
+/*
+	Allocate memory and initialize contents to false
+	before calling dfs()!
+
+	Usage:
+	discovered = new bool[size];
+	for (int i=0; i < size; i++) {
+		discovered[i] = false;
+	}
+	dfs();
+	// examine contents of discovered
+	delete [] discovered;
+*/
+void Graph::dfs(string src) {
+	discovered[index(src)] = true;
+	Edge *e = v_list[index(src)].edges;
+	while(e != NULL) {
+		if (!discovered[index(e->vptr->s)])
+			dfs(e->vptr->s);
+		e = e->next;
+	}
+}
+
+bool Graph::isConnected() {
+	discovered = new bool[size];
+	for (int i=0; i < size; i++) {
+		discovered[i] = false;
+	}
+	dfs(v_list[0].s);
+	for(int i=0; i<size; i++) {
+		if (!discovered[i])
+			return false;
+	}
+	delete [] discovered;
+	return true;
+}
+
+int Graph::components() {
+	int i, c = 0;
+	int undiscovered = 0;
+	discovered = new bool[size];
+	for (int i=0; i < size; i++) {
+		discovered[i] = false;
+	}
+	for(i=undiscovered;i<size;i++){
+		if(!discovered[i]) {
+			c++;
+			undiscovered = i;
+			dfs(v_list[undiscovered].s);
+		}
+	}
+	delete [] discovered;
+	return c;
 }
 
 

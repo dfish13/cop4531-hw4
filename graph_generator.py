@@ -1,23 +1,21 @@
 import random
 
-MAX_WEIGHT = 100
+MAX_LIGHT_YEARS = 1
+EDGE_RANGE = (3, 8)
 
-
-d = dict()
+n = 0
 s = []
-fin = open('b.txt', 'r')
-n = int(fin.readline())
-for i in range(n):
-	vert = fin.readline().strip()
-	d[vert] = i
-	s = [vert] + s
+starfile = open('stars.txt', 'r')
+for star in starfile:
+	s = [star.strip()] + s
+	n += 1
 
 print(n)
 for i in range(n):
 	print(s[i], end='')
-	for j in range(0, random.randint(20, 50)):
+	for j in range(0, random.randint(*EDGE_RANGE)):
 		print(' ', end='')
 		print(s[random.randint(0, n-1)], end=' ')
-		print(round(random.random()*MAX_WEIGHT, 3), end='')
+		print(round(random.random()*MAX_LIGHT_YEARS, 3), end='')
 	print()
 	
